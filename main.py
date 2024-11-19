@@ -1,28 +1,35 @@
 import pygame as py
 import random
 import math
-
+from pygame import mixer
 py.init()
 fps = 60
-# info = py.display.Info()
-# window_size = (info.current_w, info.current_h)
 screen = py.display.set_mode((800, 600))
 py.display.set_caption("Space Warfare")
-icon = py.image.load("C:\\Studies\\Python\\Game\\assets\\icon.png")
+icon = py.image.load("assets\\icon.png")
 py.display.set_icon(icon)
-background = py.image.load("C:\\Studies\\Python\\Game\\assets\\background.jpg")
+background = py.image.load("assets\\background.jpg")
+mixer.music.load("assets\\background.wav")
+mixer.music.play(-1)
 running = True
-score = 0
+
+
+#score
+score_value = 0
+font = py.font.Font("assets\\ARCADE_I.TTF", 32)
+text_y = 10
+text_x = 10
+
 #player
-player_img = py.image.load("C:\\Studies\\Python\\Game\\assets\\player1.png")
+player_img = py.image.load("assets\\player1.png")
 player_img = py.transform.scale(player_img, (80, 80))
 player_x = 360
 player_y = 500
 player_x_change = 0
 
 #enemy
-enemy_img = py.image.load("C:\\Studies\\Python\\Game\\assets\\enemy.png")
-num_of_enemies = 6
+enemy_img = py.image.load("assets\\enemy.png")
+num_of_enemies = 5
 enemy_img_list = []
 enemy_x = []
 enemy_y = []
@@ -30,20 +37,24 @@ enemy_x_change = []
 enemy_y_change = []
 
 for i in range(num_of_enemies):
-    enemy_img_list.append(py.image.load("C:\\Studies\\Python\\Game\\assets\\enemy.png"))
+    enemy_img_list.append(py.image.load("assets\\enemy.png"))
     enemy_x.append(random.randint(0, 768))
     enemy_y.append(random.randint(50, 150))
     enemy_x_change.append(0.1)
     enemy_y_change.append(0.05)
 
 #bullet
-bullet_img = py.image.load("C:\\Studies\\Python\\Game\\assets\\bullet.png")
+bullet_img = py.image.load("assets\\bullet.png")
 bullet_x = 0
 bullet_y = 500
 bullet_x_change = 0
 bullet_y_change = 0.5
 bullet_state = "ready"
 
+
+def show_score(x,y):
+    score = font.render("SCORE:"+ str(score_value), True , (255,255,255) )
+    screen.blit(score,(x,y))
 def bullet(x,y):
     global bullet_state
     bullet_state = "fire"
@@ -65,11 +76,13 @@ while running:
             running = False
         if event.type == py.KEYDOWN:
             if event.key == py.K_LEFT or event.key == py.K_a:
-                player_x_change = -0.25
+                player_x_change = -0.5
             if event.key == py.K_RIGHT or event.key == py.K_d:
-                player_x_change = 0.25
+                player_x_change = 0.5
             if event.key == py.K_SPACE:
                 if bullet_state == "ready":
+                    bullet_sound = mixer.Sound("assets\\laser.wav")
+                    bullet_sound.play()
                     bullet_x = player_x
                     bullet_y = player_y
                     bullet(bullet_x , bullet_y)
@@ -95,10 +108,11 @@ while running:
         is_collision = collision(enemy_x[i], enemy_y[i], bullet_x, bullet_y)
 
         if is_collision:
+            collision_sound = mixer.Sound("assets\\explosion.wav")
+            collision_sound.play()
             bullet_y = 500
             bullet_state = "ready"
-            score += 1
-            print(score)
+            score_value += 1
 
             enemy_x[i] = random.randint(0, 768)
             enemy_y[i] = random.randint(50, 150)
@@ -121,8 +135,7 @@ while running:
 
 
     player(player_x, player_y)
-
-    speed = 0.24
+    show_score(text_x,text_y)
     py.display.update()
 
 
