@@ -20,11 +20,23 @@ player_x_change = 0
 
 #enemy
 enemy_img = py.image.load("C:\\Studies\\Python\\Game\\assets\\enemy.png")
-# enemy_img = py.transform.scale(player_img, (50, 50))
 enemy_x = random.randint(0,768)
 enemy_y = 0
 enemy_x_change = 0
 enemy_y_change = 0
+
+#bullet
+bullet_img = py.image.load("C:\\Studies\\Python\\Game\\assets\\bullet.png")
+bullet_x = 0
+bullet_y = 500
+bullet_x_change = 0
+bullet_y_change = 0.5
+bullet_state = "ready"
+
+def bullet(x,y):
+    global bullet_state
+    bullet_state = "fire"
+    screen.blit(bullet_img,(x+25,y+10))
 
 def enemy(x,y):
     screen.blit(enemy_img,(x,y))
@@ -41,6 +53,11 @@ while running:
                 player_x_change = -0.25
             if event.key == py.K_RIGHT or event.key == py.K_d:
                 player_x_change = 0.25
+            if event.key == py.K_SPACE:
+                if bullet_state == "ready":
+                    bullet_x = player_x
+                    bullet_y = player_y
+                    bullet(bullet_x , bullet_y)
         if event.type == py.KEYUP:
             if event.key == py.K_LEFT or event.key == py.K_a:
                 player_x_change = 0
@@ -63,6 +80,13 @@ while running:
         player_x_change =0
     if player_x > 720:
         player_x_change =0
+
+    if bullet_state == "fire":
+        bullet(bullet_x,bullet_y)
+        bullet_y -= bullet_y_change
+        if bullet_y <= 0:
+            bullet_y = 500
+            bullet_state = "ready"
 
     player(player_x, player_y)
     enemy(enemy_x,enemy_y)
