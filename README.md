@@ -1,7 +1,7 @@
-#SPACE WARFARE
-A simple space shooter game made with using pygame library in python.
+# SPACE WARFARE
+This is simple space shooting game made with help of pygame library in python.
 
-###Requirements
-'''
+### Requirements
+```python
 pip install pygame
-'''
+```
